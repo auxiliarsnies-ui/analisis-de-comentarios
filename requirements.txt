@@ -1,0 +1,8 @@
+pandas
+openpyxl
+pysentimiento
+spacy
+matplotlib
+wordcloud
+gdown
+torch
