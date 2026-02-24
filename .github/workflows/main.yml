@@ -2,7 +2,7 @@ name: Ejecucion Analisis Drive
 
 on:
   schedule:
-    - cron: '25 20 * * *' # Se ejecuta a las 12 PM UTC todos los días
+    - cron: '58 21 * * *' # Se ejecuta a las 12 PM UTC todos los días
   workflow_dispatch: # Permite ejecutarlo manualmente con un botón
 
 jobs:
