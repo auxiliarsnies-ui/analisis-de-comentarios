@@ -5,6 +5,10 @@ from pysentimiento import create_analyzer
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 from collections import Counter
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 import gdown  # Necesaria para descargar de Drive
 
 # --- CONFIGURACIÓN DE ENTORNO ---
@@ -80,4 +84,34 @@ print("\nGráfica guardada como 'reporte_final_sentimientos.png'")
 
 # Guardar Excel procesado
 df.to_excel("analisis_resultados_completo.xlsx", index=False)
+
 print("Excel de resultados generado.")
+
+def enviar_correo():
+    remitente = "auxiliar.snies@uan.edu.co"
+    destinatario = "auxiliar.snies@uan.edu.co"
+    password = os.environ['EMAIL_PASSWORD'] # Esto lo lee del Secret de GitHub
+
+    msg = MIMEMultipart()
+    msg['From'] = remitente
+    msg['To'] = destinatario
+    msg['Subject'] = "📊 Reporte Diario de Análisis Docente"
+
+    # Adjuntar el archivo Excel
+    archivo_adjunto = "analisis_resultados_completo.xlsx"
+    with open(archivo_adjunto, "rb") as adjunto:
+        parte = MIMEBase("application", "octet-stream")
+        parte.set_payload(adjunto.read())
+        encoders.encode_base64(parte)
+        parte.add_header("Content-Disposition", f"attachment; filename={archivo_adjunto}")
+        msg.attach(parte)
+
+    # Enviar
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login(remitente, password)
+    server.send_message(msg)
+    server.quit()
+    print("¡Correo enviado con éxito!")
+
+enviar_correo()
