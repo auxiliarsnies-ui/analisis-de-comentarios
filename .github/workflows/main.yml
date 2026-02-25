@@ -1,37 +1,38 @@
-name: Ejecucion con Envios de Correo
+name: Sistema de Análisis y Envío de Reportes
 
 on:
-  schedule:
-    - cron: '21 14 * * *' # Tu hora programada
-  workflow_dispatch: # Para que puedas darle al botón de "Run" manualmente
+  # Esto permite que el botón "Run workflow" aparezca en la pestaña Actions
+  workflow_dispatch: 
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Descargar codigo
+      - name: 1. Descargar código del repositorio
         uses: actions/checkout@v4
 
-      - name: Configurar Python
+      - name: 2. Configurar el entorno de Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
+          cache: 'pip' # Ahorra tiempo en futuras ejecuciones manuales
 
-      - name: Instalar dependencias
+      - name: 3. Instalar dependencias optimizadas
         run: |
           pip install -r requirements.txt
           python -m spacy download es_core_news_sm
 
-      - name: Correr Script y Enviar Correo
+      - name: 4. Ejecutar análisis de IA y enviar correo
         env:
-          # Sin estas dos líneas, el archivo .py falla
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          # Conexión segura con tu contraseña de aplicación de Gmail
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }} 
         run: python analisis.py
 
-      - name: Subir Resultados (Opcional)
+      - name: 5. Guardar copia de seguridad en GitHub (Artifacts)
+        if: always() # Se ejecuta aunque el paso anterior falle
         uses: actions/upload-artifact@v4
         with:
-          name: Reporte-Final
+          name: Reporte-Generado
           path: |
             reporte_final_sentimientos.png
             analisis_resultados_completo.xlsx
