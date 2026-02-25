@@ -2,7 +2,7 @@ name: Ejecucion con Envios de Correo
 
 on:
   schedule:
-    - cron: '20 09 * * *' # Tu hora programada
+    - cron: '21 14 * * *' # Tu hora programada
   workflow_dispatch: # Para que puedas darle al botón de "Run" manualmente
 
 jobs:
