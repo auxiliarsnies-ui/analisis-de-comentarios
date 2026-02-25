@@ -1,9 +1,9 @@
-name: Ejecucion Analisis Drive
+name: Ejecucion con Envios de Correo
 
 on:
   schedule:
-    - cron: '58 21 * * *' # Se ejecuta a las 12 PM UTC todos los días
-  workflow_dispatch: # Permite ejecutarlo manualmente con un botón
+    - cron: '20 09 * * *' # Tu hora programada
+  workflow_dispatch: # Para que puedas darle al botón de "Run" manualmente
 
 jobs:
   build:
@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Configurar Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
 
@@ -22,13 +22,16 @@ jobs:
           pip install -r requirements.txt
           python -m spacy download es_core_news_sm
 
-      - name: Correr Analisis
+      - name: Correr Script y Enviar Correo
+        env:
+          # Sin estas dos líneas, el archivo .py falla
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         run: python analisis.py
 
-      - name: Subir Resultados
+      - name: Subir Resultados (Opcional)
         uses: actions/upload-artifact@v4
         with:
-          name: Reporte-IA
+          name: Reporte-Final
           path: |
             reporte_final_sentimientos.png
             analisis_resultados_completo.xlsx
